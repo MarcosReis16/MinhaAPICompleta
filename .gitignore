@@ -32,3 +32,20 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+*.dll
+
+*.pdb
+
+src/DevIO.Api/obj/Debug/netcoreapp2.2/DevIO.Api.csproj.FileListAbsolute.txt
+
+*.cache
+
+src/DevIO.Api/obj/DevIO.Api.csproj.nuget.dgspec.json
+
+*.props
+
+src/DevIO.Api/obj/project.assets.json
+
+src/DevIO.Data/obj/
+
+src/DevIO.Api/bin/Debug/netcoreapp2.2/DevIO.Api.deps.json
