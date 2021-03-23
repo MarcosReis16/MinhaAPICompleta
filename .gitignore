@@ -49,3 +49,9 @@ src/DevIO.Api/obj/project.assets.json
 src/DevIO.Data/obj/
 
 src/DevIO.Api/bin/Debug/netcoreapp2.2/DevIO.Api.deps.json
+
+src/DevIO.Business/obj/Debug/netcoreapp2.2/DevIO.Business.csproj.FileListAbsolute.txt
+
+src/DevIO.Business/obj/DevIO.Business.csproj.nuget.dgspec.json
+
+src/DevIO.Business/obj/project.assets.json
