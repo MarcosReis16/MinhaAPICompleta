@@ -2,6 +2,7 @@
 using DevIO.Api.ViewModel;
 using DevIO.Business.Interfaces;
 using DevIO.Business.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -41,17 +42,18 @@ namespace DevIO.Api.Controllers
             return produtoViewModel;
         }
 
+        [RequestSizeLimit(40000000)]
         [HttpPost]
         public async Task<ActionResult<ProdutoViewModel>> Adicionar(ProdutoViewModel produtoViewModel)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            var imagemNome = Guid.NewGuid() + "_" + produtoViewModel.Imagem;
+            var imgPrefixo = Guid.NewGuid() + "_";
 
-            if (!UploadArquivo(produtoViewModel.ImagemUpload, imagemNome))
+            if (! await UploadArquivo(produtoViewModel.ImagemUpload, imgPrefixo))
                 return CustomResponse();
 
-            produtoViewModel.Imagem = imagemNome;
+            produtoViewModel.Imagem = imgPrefixo + produtoViewModel.ImagemUpload.FileName;
 
             await _produtoService.Adicionar(_mapper.Map<Produto>(produtoViewModel));
 
@@ -70,32 +72,67 @@ namespace DevIO.Api.Controllers
             return CustomResponse(produto);
         }
 
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Atualizar(Guid id, ProdutoViewModel produtoViewModel)
+        {
+            if (id != produtoViewModel.Id)
+            {
+                NotificarErro("Os ids informados não são iguais!");
+                return CustomResponse();
+            }
+
+            var produtoAtualizacao = await ObterProduto(id);
+            produtoViewModel.Imagem = produtoAtualizacao.Imagem;
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            if(produtoViewModel.ImagemUpload != null)
+            {
+                var imagemNome = Guid.NewGuid() + "_" + produtoViewModel.Imagem;
+                if(!await UploadArquivo(produtoViewModel.ImagemUpload, imagemNome))
+                {
+                    return CustomResponse(ModelState);
+                }
+                produtoAtualizacao.Imagem = imagemNome;
+            }
+
+            produtoAtualizacao.Nome = produtoViewModel.Nome;
+            produtoAtualizacao.Descricao = produtoViewModel.Descricao;
+            produtoAtualizacao.Valor = produtoViewModel.Valor;
+            produtoAtualizacao.Ativo = produtoViewModel.Ativo;
+
+            await _produtoService.Atualizar(_mapper.Map<Produto>(produtoAtualizacao));
+
+            return CustomResponse(produtoViewModel);
+        }
+
 
         private async Task<ProdutoViewModel> ObterProduto(Guid id)
         {
             return _mapper.Map<ProdutoViewModel>(await _produtoRepository.ObterProdutoFornecedor(id));
         }
 
-        private bool UploadArquivo(string arquivo, string imgNome)
+        private async Task<bool> UploadArquivo(IFormFile arquivo, string imgPrefix)
         {
             
-            if(string.IsNullOrEmpty(arquivo))
+            if(arquivo == null || arquivo.Length == 0)
             {
                 NotificarErro("Forneça uma imagem para este produto!");
                 return false;
             }
 
-            var imageDataByteArray = Convert.FromBase64String(arquivo);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imgPrefix + arquivo.FileName);
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/app/demo-webapi/src/assets", imgNome);
-
-            if (System.IO.File.Exists(filePath))
+            if (System.IO.File.Exists(path))
             {
                 NotificarErro("Já existe um arquivo com este nome!");
                 return false;
             }
 
-            System.IO.File.WriteAllBytes(filePath, imageDataByteArray);
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await arquivo.CopyToAsync(stream);
+            }
+
 
             return true;
         }
