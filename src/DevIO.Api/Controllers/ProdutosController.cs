@@ -120,7 +120,7 @@ namespace DevIO.Api.Controllers
                 return false;
             }
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imgPrefix + arquivo.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/app/demo-webapi/src/assets", imgPrefix + arquivo.FileName);
 
             if (System.IO.File.Exists(path))
             {

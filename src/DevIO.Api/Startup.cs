@@ -22,10 +22,9 @@ namespace DevIO.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<MeuDbContext>(options =>
-            {
-                var connectionString = "Server=DESKTOP-CF58TFF\\SQLEXPRESS;Database=MinhaApiCore;Trusted_Connection=True;MultipleActiveResultSets=true";
-                options.UseSqlServer(connectionString);
-            });
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentityConfiguration(Configuration);
 
             services.AddAutoMapper(typeof(Startup));
 
@@ -40,13 +39,11 @@ namespace DevIO.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
                 app.UseHsts();
-            }
+
+            app.UseAuthentication();
 
             app.UseMvcConfiguration();
         }
