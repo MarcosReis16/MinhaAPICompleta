@@ -26,8 +26,9 @@ namespace DevIO.Api.Controllers
 
         public AuthController(IMapper mapper, INotificador notificador, 
                               SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager,
-                              IOptions<AppSettings> appSettings)
-                              : base (mapper, notificador)
+                              IOptions<AppSettings> appSettings,
+                              IUser user)
+                              : base (mapper, notificador, user)
         {
             _signInManager = signInManager;
             _userManager = userManager;
