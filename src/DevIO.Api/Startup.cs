@@ -39,9 +39,15 @@ namespace DevIO.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+                app.UseCors("Development");
+            }
             else
+            {
                 app.UseHsts();
+                app.UseCors("Production");
+            }
 
             app.UseAuthentication();
 

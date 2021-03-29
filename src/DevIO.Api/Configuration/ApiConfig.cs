@@ -23,6 +23,13 @@ namespace DevIO.Api.Configuration
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
+
+                options.AddPolicy("Production",
+                     builder => builder
+                        .WithMethods("GET")
+                        .WithOrigins("http://desenvolvedor.io")
+                        .SetIsOriginAllowedToAllowWildcardSubdomains()
+                        .AllowAnyHeader());
             });
 
             return services;
@@ -31,8 +38,6 @@ namespace DevIO.Api.Configuration
         public static IApplicationBuilder UseMvcConfiguration(this IApplicationBuilder app)
         {
             app.UseHttpsRedirection();
-
-            app.UseCors("Development");
 
             app.UseMvc();
 
