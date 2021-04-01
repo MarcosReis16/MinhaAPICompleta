@@ -39,7 +39,7 @@ namespace DevIO.Api.Controllers
 
         protected ActionResult CustomResponse(object result = null)
         {
-            if (this.OperacaoValida())
+            if (OperacaoValida())
             {
                 return Ok(new
                 {
@@ -57,7 +57,7 @@ namespace DevIO.Api.Controllers
 
         protected ActionResult CustomResponse(ModelStateDictionary modelState)
         {
-            if (!ModelState.IsValid) this.NotificarErrorModelInvalid(modelState);
+            if (!ModelState.IsValid) NotificarErrorModelInvalid(modelState);
             return CustomResponse();
         }
 
@@ -68,7 +68,7 @@ namespace DevIO.Api.Controllers
             foreach (var erro in erros)
             {
                 var erroMsg = erro.Exception == null ? erro.ErrorMessage : erro.Exception.Message;
-                this.NotificarErro(erroMsg);
+                NotificarErro(erroMsg);
             }
         }
 
@@ -78,6 +78,6 @@ namespace DevIO.Api.Controllers
         }
 
 
-        
+
     }
 }

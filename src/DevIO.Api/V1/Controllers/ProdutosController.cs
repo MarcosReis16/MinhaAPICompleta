@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DevIO.Api.Controllers;
 using DevIO.Api.Extensions;
 using DevIO.Api.ViewModel;
 using DevIO.Business.Interfaces;
@@ -11,7 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace DevIO.Api.Controllers
+namespace DevIO.Api.V1.Controllers
 {
     [Authorize]
     [ApiController]
@@ -22,8 +23,8 @@ namespace DevIO.Api.Controllers
 
         private readonly IProdutoService _produtoService;
 
-        public ProdutosController(IMapper mapper, INotificador notificador, 
-                                  IProdutoRepository produtoRepository, IProdutoService produtoService, IUser user) : base (mapper, notificador, user)
+        public ProdutosController(IMapper mapper, INotificador notificador,
+                                  IProdutoRepository produtoRepository, IProdutoService produtoService, IUser user) : base(mapper, notificador, user)
         {
             _produtoRepository = produtoRepository;
             _produtoService = produtoService;
@@ -45,7 +46,7 @@ namespace DevIO.Api.Controllers
             return produtoViewModel;
         }
 
-        [ClaimsAuthorize("Produto","Adicionar")]
+        [ClaimsAuthorize("Produto", "Adicionar")]
         [RequestSizeLimit(40000000)]
         [HttpPost]
         public async Task<ActionResult<ProdutoViewModel>> Adicionar(ProdutoViewModel produtoViewModel)
@@ -54,7 +55,7 @@ namespace DevIO.Api.Controllers
 
             var imgPrefixo = Guid.NewGuid() + "_";
 
-            if (! await UploadArquivo(produtoViewModel.ImagemUpload, imgPrefixo))
+            if (!await UploadArquivo(produtoViewModel.ImagemUpload, imgPrefixo))
                 return CustomResponse();
 
             produtoViewModel.Imagem = imgPrefixo + produtoViewModel.ImagemUpload.FileName;
@@ -91,10 +92,10 @@ namespace DevIO.Api.Controllers
             produtoViewModel.Imagem = produtoAtualizacao.Imagem;
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            if(produtoViewModel.ImagemUpload != null)
+            if (produtoViewModel.ImagemUpload != null)
             {
                 var imagemNome = Guid.NewGuid() + "_" + produtoViewModel.Imagem;
-                if(!await UploadArquivo(produtoViewModel.ImagemUpload, imagemNome))
+                if (!await UploadArquivo(produtoViewModel.ImagemUpload, imagemNome))
                 {
                     return CustomResponse(ModelState);
                 }
@@ -119,8 +120,8 @@ namespace DevIO.Api.Controllers
 
         private async Task<bool> UploadArquivo(IFormFile arquivo, string imgPrefix)
         {
-            
-            if(arquivo == null || arquivo.Length == 0)
+
+            if (arquivo == null || arquivo.Length == 0)
             {
                 NotificarErro("Forneça uma imagem para este produto!");
                 return false;

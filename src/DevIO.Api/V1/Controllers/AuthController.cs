@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DevIO.Api.Controllers;
 using DevIO.Api.Extensions;
 using DevIO.Api.ViewModel;
 using DevIO.Business.Interfaces;
@@ -13,7 +14,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DevIO.Api.Controllers
+namespace DevIO.Api.V1.Controllers
 {
     [Route("api")]
     public class AuthController : MainController
@@ -24,11 +25,11 @@ namespace DevIO.Api.Controllers
 
         private readonly AppSettings _appSettings;
 
-        public AuthController(IMapper mapper, INotificador notificador, 
+        public AuthController(IMapper mapper, INotificador notificador,
                               SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager,
                               IOptions<AppSettings> appSettings,
                               IUser user)
-                              : base (mapper, notificador, user)
+                              : base(mapper, notificador, user)
         {
             _signInManager = signInManager;
             _userManager = userManager;
