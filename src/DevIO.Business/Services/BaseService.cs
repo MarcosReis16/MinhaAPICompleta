@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DevIO.Business.Interfaces;
+﻿using DevIO.Business.Interfaces;
 using DevIO.Business.Models;
-using DevIO.Business.Models.Validations;
 using DevIO.Business.Notifications;
 using FluentValidation;
 using FluentValidation.Results;
